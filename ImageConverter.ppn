@@ -1,0 +1,45 @@
+<%ppn_script%option="http,gl='def2',no_output,exp='ppn'">
+http_header('Content-type: image/jpeg');
+if (!empty($W:g['url'])) {
+    $Qimg_file = $W:g['url']
+}
+$Qn_w = 220;
+if (!empty($W:g['w'])) {
+    $Qn_w = $W:g['w']
+}
+list($Qsrc_w, $Qsrc_h) = g_img_wh($Qimg_file);
+$Qprop = $Qsrc_w / $Qsrc_h;
+$Qn_h = $Qn_w / $Qprop;
+if($Qprop < 1){
+    $Qn_h = $Qn_w;
+    $Qn_w = $Qn_w * $Qprop
+}
+$Qft = str_low(end(exp('.', $Qimg_file)));
+if ($Qft === "jpg" || $Qft === "jpeg") {
+    $Qsrc_img = imgmake_f_JPEG($Qimg_file);
+    $Qn_img = imgmake_tc($Qn_w, $Qn_h)
+} elseif ($Qft === "gif") {
+    $Qsrc_img = imgmake_f_GIF($Qimg_file);
+    $Qn_img = imgmake_tc($Qn_w, $Qn_h);
+    $Qal = img_cl_trns($Qsrc_img);
+    imgfl($Qn_img, 0, 0, $Qal);
+    img_cl_trns($Qn_img, $Qal)
+} elseif ($Qft === "png") {
+    $Qsrc_img = imgmake_f_PNG($Qimg_file);
+    $Qn_img = imgmake_tc($Qn_w, $Qn_h);
+    img_al_b2($Qn_img, false);
+    imgs_al($Qn_img, true)
+} else {
+    ret
+}
+img_co_res($Qn_img,$Qsrc_img,0,0,0,0,$Qn_w,$Qn_h,$Qsrc_w,$Qsrc_h);
+if ($Qft === "jpg" || $Qft === "jpeg") {
+    imgjpg($Qn_img)
+} elseif ($Qft === "gif") {
+    imgif($Qn_img)
+} elseif ($Qft === "png") {
+    imgpng($Qn_img)
+}
+imgout($Qn_img);
+imgout($Qsrc_img)
+</%ppn_script%>
